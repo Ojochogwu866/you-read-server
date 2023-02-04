@@ -16,7 +16,6 @@ initializePassport(
   (email) => User.find((user) => user.email === email),
   (id) => User.find((user) => user.id === id)
 );
-
 app.use(express.urlencoded({ extended: false }));
 app.use(flash());
 app.use(
@@ -37,11 +36,11 @@ app.post("/register", async (req, res) => {
       email: req.body.email,
       password: hashedPassword,
     });
-    req.login(user, (e) => {
-      if (e) throw err;
+    req.login(user, (error) => {
+      if (error) throw err;
     });
     res.redirect("/login");
-  } catch (e) {
+  } catch (error) {
     res.redirect("/register");
   }
 });
