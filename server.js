@@ -1,14 +1,20 @@
-require("dotenv").config();
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
+const dotenv = require("dotenv");
 const authRoute = require("./routes/auth");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
+dotenv.config();
+
 mongoose.set("strictQuery", false);
-mongoose.connect(process.env.MONGO_URL, () => console.log("connected to db!"));
+mongoose
+  .connect(process.env.MONGO_URL)
+  .then(() => console.log("connected"))
+  .catch((e) => console.log(e));
+
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(cors());
