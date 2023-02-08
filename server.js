@@ -8,15 +8,7 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
 mongoose.set("strictQuery", false);
-mongoose.connect(
-  process.env.MONGO_URL,
-  {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useCreateIndex: true,
-  },
-  () => console.log("connected to db!")
-);
+mongoose.connect(process.env.MONGO_URL, () => console.log("connected to db!"));
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(cors());

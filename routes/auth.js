@@ -1,31 +1,46 @@
 const express = require("express");
 const router = express.Router();
-const Joi = require("joi");
 const User = require("../model/users");
+const bcrypt = require("bcrypt");
+const { registerValidation, loginValidation } = require("../validation");
 
-const schema = Joi.object({
-  name: Joi.string().min(6).required(),
-  email: Joi.string().min(6).required().email(),
-  password: Joi.string().min(6).required(),
-});
-
+//register-user
 router.post("/register", async (req, res) => {
-  const { error } = schema.validate(req.body, {
-    abortEarly: false,
-  });
+  const { error } = registerValidation(req.body);
   if (error) return res.status(400).send(error.details[0].message);
-
+  //check if user is registered
+  const emailExist = await User.findOne({ email: req.body.email });
+  if (emailExist) return res.status(400).send("Email already exist");
+  //hashpassword
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(req.body.password, salt);
+  //createUser
   const user = new User({
     name: req.body.name,
     email: req.body.email,
-    password: req.body.password,
+    password: hashedPassword,
   });
   try {
     const savedUser = await user.save();
-    res.send(savedUser);
+    res.send({ user: user._id });
   } catch (err) {
     res.status(400).send(err);
   }
+});
+
+//login
+router.post("/login", async (req, res) => {
+  const { error } = loginValidation(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
+
+  const userExist = await User.findOne({ email: req.body.email });
+  if (!userExist) return res.status(400).send("Email or Password Invalid");
+  const validPassword = await bcrypt.compare(
+    req.body.password,
+    userExist.password
+  );
+  if (!validPassword) return res.status(400).send("Invalid Password");
+  res.send("Signed In Successfully");
 });
 
 module.exports = router;
