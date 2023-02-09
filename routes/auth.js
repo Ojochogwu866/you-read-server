@@ -1,10 +1,11 @@
 const express = require("express");
+const app = express();
 const router = express.Router();
 const User = require("../model/users");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { registerValidation, loginValidation } = require("../validation");
-
+const passport = require("passport");
 //register-user
 router.post("/register", async (req, res) => {
   const { error } = registerValidation(req.body);
@@ -47,5 +48,21 @@ router.post("/login", async (req, res) => {
   res.header("auth-token", token).send(token);
   res.send("Signed In Successfully");
 });
+router.get(
+  "/auth/google",
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+  })
+);
+
+router.get(
+  "/auth/google/callback",
+  passport.authenticate("google", {
+    failureRedirect: "/",
+    successRedirect: "/reader/profile",
+    failureFlash: true,
+    successFlash: "Successfully logged in!",
+  })
+);
 
 module.exports = router;
