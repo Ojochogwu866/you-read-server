@@ -9,6 +9,7 @@ const passport = require("passport");
 const flash = require("express-flash");
 const session = require("express-session");
 const cors = require("cors");
+require("./config/passport");
 require("./config/google-config");
 
 dotenv.config();
@@ -29,10 +30,8 @@ app.use(
   })
 );
 app.use(cors());
-
 app.use(passport.initialize());
 app.use(passport.session());
-
 app.use("/api/user", authRoute);
 app.use(flash());
 app.listen(3000, () => console.log("Server up and running"));

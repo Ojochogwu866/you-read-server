@@ -6,6 +6,9 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { registerValidation, loginValidation } = require("../validation");
 const passport = require("passport");
+require("../config/passport");
+require("../config/google-config");
+
 //register-user
 router.post("/register", async (req, res) => {
   const { error } = registerValidation(req.body);
@@ -54,12 +57,11 @@ router.get(
     scope: ["profile", "email"],
   })
 );
-
 router.get(
   "/auth/google/callback",
   passport.authenticate("google", {
-    failureRedirect: "/",
-    successRedirect: "/reader/profile",
+    failureRedirect: "",
+    successRedirect: "",
     failureFlash: true,
     successFlash: "Successfully logged in!",
   })
