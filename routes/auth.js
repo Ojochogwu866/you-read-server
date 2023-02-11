@@ -57,12 +57,21 @@ router.get(
 router.get(
   "/auth/google/callback",
   passport.authenticate("google", {
-    failureRedirect: "/login",
-    successRedirect: "/profile",
-    failureFlash: true,
-    successFlash: "Successfully logged in!",
-  })
+    failureRedirect: "/failed",
+  }),
+  function (req, res) {
+    res.redirect("/success");
+  }
 );
+const isLoggedIn = (req, res, next) => {
+  req.user ? next() : res.sendStatus(401);
+};
+router.get("/failed", (req, res) => {
+  res.send("Failed");
+});
+router.get("/success", isLoggedIn, (req, res) => {
+  res.send(`Welcome ${req.user.email}`);
+});
 // const isLoggedIn = (req, res, next) => {
 //   req.user ? next() : res.sendStatus(401);
 // };

@@ -5,9 +5,9 @@ passport.serializeUser((user, done) => {
   done(null, user.email);
 });
 
-passport.deserializeUser(async (email, done) => {
+passport.deserializeUser(async (user, done) => {
   const currentUser = await User.findOne({
-    email,
+    user: user.email,
   });
   done(null, currentUser);
 });

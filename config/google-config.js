@@ -1,5 +1,5 @@
 const passport = require("passport");
-const UserService = require("../index");
+const User = require("../model/users");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const dotenv = require("dotenv");
 dotenv.config();
@@ -11,27 +11,19 @@ passport.use(
       clientID: process.env.CLIENT_ID,
       clientSecret: process.env.CLIENT_SECRET,
     },
-    async (accessToken, refreshToken, profile, done) => {
-      const email = profile.emails[0].value;
-      const name = profile.name.givenName + profile.name.familyName;
-      const source = "google";
-      const currentUser = await UserService.getUserByEmail({
-        email,
+    (accessToken, refreshToken, profile, done) => {
+      User.findOne({ email: profile.email }).then((existingUser) => {
+        if (existingUser) {
+          done(null, existingUser);
+        } else {
+          new User({
+            name: profile.displayName,
+            email: profile.emails[0].value,
+          })
+            .save()
+            .then((user) => done(null, user));
+        }
       });
-      if (!currentUser) {
-        const newUser = await UserService.addGoogleUser({
-          email,
-          name,
-        });
-        return done(null, newUser);
-      }
-      if (currentUser.source != "google") {
-        return done(null, false, {
-          message: `You have previously signed up with a different signin method`,
-        });
-      }
-      currentUser.lastVisited = new Date();
-      return done(null, currentUser);
     }
   )
 );
