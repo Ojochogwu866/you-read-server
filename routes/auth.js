@@ -43,7 +43,6 @@ router.post("/login", async (req, res) => {
     userExist.password
   );
   if (!validPassword) return res.status(400).send("Invalid Password");
-
   //create and assign a token
   const token = jwt.sign({ _id: User._id }, process.env.TOKEN_SECRET);
   res.header("auth-token", token).send(token);
@@ -59,9 +58,15 @@ router.get(
   "/auth/google/callback",
   passport.authenticate("google", {
     failureRedirect: "/login",
-    successRedirect: "/register",
+    successRedirect: "/profile",
     failureFlash: true,
     successFlash: "Successfully logged in!",
   })
 );
+// const isLoggedIn = (req, res, next) => {
+//   req.user ? next() : res.sendStatus(401);
+// };
+// router.get("/profile", isLoggedIn, (req, res) => {
+//   res.render("profile.ejs", { user: req.user });
+// });
 module.exports = router;

@@ -1,8 +1,7 @@
 const addGoogleUser =
   (User) =>
-  ({ id, email, name }) => {
+  ({ email, name }) => {
     const user = new User({
-      id,
       email,
       name,
       source: "google",

@@ -12,7 +12,6 @@ passport.use(
       clientSecret: process.env.CLIENT_SECRET,
     },
     async (accessToken, refreshToken, profile, done) => {
-      const id = profile.id;
       const email = profile.emails[0].value;
       const name = profile.name.givenName + profile.name.familyName;
       const source = "google";
@@ -21,7 +20,6 @@ passport.use(
       });
       if (!currentUser) {
         const newUser = await UserService.addGoogleUser({
-          id,
           email,
           name,
         });

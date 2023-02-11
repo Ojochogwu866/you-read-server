@@ -2,12 +2,12 @@ const passport = require("passport");
 const User = require("../model/users");
 
 passport.serializeUser((user, done) => {
-  done(null, user.id);
+  done(null, user.email);
 });
 
-passport.deserializeUser(async (id, done) => {
+passport.deserializeUser(async (email, done) => {
   const currentUser = await User.findOne({
-    id,
+    email,
   });
   done(null, currentUser);
 });
