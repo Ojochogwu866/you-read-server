@@ -1,5 +1,4 @@
 const express = require("express");
-const app = express();
 const router = express.Router();
 const User = require("../model/users");
 const jwt = require("jsonwebtoken");
@@ -32,7 +31,6 @@ router.post("/register", async (req, res) => {
     res.status(400).send(err);
   }
 });
-
 //login
 router.post("/login", async (req, res) => {
   const { error } = loginValidation(req.body);
@@ -60,11 +58,10 @@ router.get(
 router.get(
   "/auth/google/callback",
   passport.authenticate("google", {
-    failureRedirect: "",
-    successRedirect: "",
+    failureRedirect: "/login",
+    successRedirect: "/register",
     failureFlash: true,
     successFlash: "Successfully logged in!",
   })
 );
-
 module.exports = router;

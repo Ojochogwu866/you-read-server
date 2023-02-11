@@ -32,6 +32,6 @@ app.use(
 app.use(cors());
 app.use(passport.initialize());
 app.use(passport.session());
-app.use("/api/user", authRoute);
 app.use(flash());
+app.use("/api/user", authRoute);
 app.listen(3000, () => console.log("Server up and running"));
