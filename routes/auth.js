@@ -7,6 +7,7 @@ const { registerValidation, loginValidation } = require("../validation");
 const passport = require("passport");
 require("../config/passport");
 require("../config/google-config");
+require("../config/facebook-config");
 
 //register-user
 router.post("/register", async (req, res) => {
@@ -61,6 +62,14 @@ router.get(
   }),
   function (req, res) {
     res.redirect("/success");
+  }
+);
+router.get("/auth/facebook", passport.authenticate("facebook"));
+router.get(
+  "/auth/facebook/callback",
+  passport.authenticate("facebook", { failureRedirect: "/login" }),
+  (req, res) => {
+    res.redirect("/");
   }
 );
 const isLoggedIn = (req, res, next) => {

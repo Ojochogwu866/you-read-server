@@ -11,19 +11,24 @@ passport.use(
       clientID: process.env.CLIENT_ID,
       clientSecret: process.env.CLIENT_SECRET,
     },
-    (accessToken, refreshToken, profile, done) => {
-      User.findOne({ email: profile.email }).then((existingUser) => {
+    async (accessToken, refreshToken, profile, cb) => {
+      try {
+        const existingUser = await User.findOne({
+          email: profile.emails[0].value,
+        });
         if (existingUser) {
-          done(null, existingUser);
+          return cb(null, existingUser);
         } else {
-          new User({
+          const newUser = new User({
             name: profile.displayName,
             email: profile.emails[0].value,
-          })
-            .save()
-            .then((user) => done(null, user));
+          });
+          await newUser.save();
+          return cb(null, newUser);
         }
-      });
+      } catch (error) {
+        return cb(error);
+      }
     }
   )
 );

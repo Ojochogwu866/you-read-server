@@ -3,6 +3,11 @@ const Schema = mongoose.Schema;
 
 const userSchema = new Schema(
   {
+    facebookId: {
+      type: String,
+      unique: true,
+      required: false,
+    },
     name: {
       type: String,
       required: true,
@@ -11,7 +16,6 @@ const userSchema = new Schema(
     },
     email: {
       type: String,
-      required: true,
       maxlength: 255,
       minlength: 6,
     },

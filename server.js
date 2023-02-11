@@ -11,6 +11,7 @@ const session = require("express-session");
 const cors = require("cors");
 require("./config/passport");
 require("./config/google-config");
+require("./config/facebook-config");
 
 dotenv.config();
 
