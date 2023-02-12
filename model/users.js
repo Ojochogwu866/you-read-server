@@ -3,14 +3,8 @@ const Schema = mongoose.Schema;
 
 const userSchema = new Schema(
   {
-    facebookId: {
-      type: String,
-      unique: true,
-      required: false,
-    },
     name: {
       type: String,
-      required: true,
       minlength: 6,
       maxlength: 255,
     },
@@ -27,6 +21,44 @@ const userSchema = new Schema(
     date: {
       type: Date,
       default: Date.now,
+    },
+    data: {
+      type: mongoose.Schema.Types.Mixed,
+      required: false,
+      default: {
+        bookReading: {
+          pagesLeft: {
+            type: Number,
+            default: 0,
+          },
+          booksCompleted: {
+            type: Number,
+            default: 0,
+          },
+          yearTarget: {
+            type: Number,
+            default: 0,
+          },
+          totalPagesRead: {
+            type: Number,
+            default: 0,
+          },
+          currentBook: {
+            title: {
+              type: String,
+              default: "",
+            },
+            author: {
+              type: String,
+              default: "",
+            },
+            genre: {
+              type: String,
+              default: "",
+            },
+          },
+        },
+      },
     },
   },
   { timestamps: true }
