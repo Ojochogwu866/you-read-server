@@ -36,7 +36,6 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
   const { error } = loginValidation(req.body);
   if (error) return res.status(400).send(error.details[0].message);
-
   const userExist = await User.findOne({ email: req.body.email });
   if (!userExist) return res.status(400).send("Email or Password Invalid");
   const validPassword = await bcrypt.compare(
@@ -80,6 +79,19 @@ router.get("/failed", (req, res) => {
 });
 router.get("/success", isLoggedIn, (req, res) => {
   res.send(`Welcome ${req.user.email}`);
+});
+
+router.post("/update-user/books-year/:_id", async (req, res) => {
+  try {
+    const user = await User.findById(req.params._id);
+    if (!user) return res.status(404).send("User not found");
+    user.data.bookReading.pagesLeft = req.body.pagesLeft;
+    user.data.bookReading.booksCompleted = req.body.booksCompleted;
+    const updatedUser = await user.save();
+    res.send(updatedUser);
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
 });
 // const isLoggedIn = (req, res, next) => {
 //   req.user ? next() : res.sendStatus(401);
