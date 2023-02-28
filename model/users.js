@@ -1,3 +1,4 @@
+const { boolean } = require("joi");
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
@@ -27,26 +28,31 @@ const userSchema = new Schema(
       required: false,
       default: {
         bookReading: {
-          pagesLeft: {
-            type: Number,
-            default: 0,
-          },
-          booksCompleted: {
-            type: Number,
-            default: 0,
-          },
-          yearTarget: {
-            type: Number,
-            default: 0,
-          },
-          totalPagesRead: {
-            type: Number,
-            default: 0,
+          bookId: {
+            type: String,
+            unique: true,
+            required: true,
           },
           currentBook: {
+            pagesLeft: {
+              type: Number,
+              default: 0,
+            },
+            bookCompleted: {
+              type: boolean,
+              default: false,
+            },
+            daysLeft: {
+              type: Number,
+              default: 0,
+            },
             title: {
               type: String,
               default: "",
+            },
+            totalPages: {
+              type: Number,
+              default: 0,
             },
             author: {
               type: String,

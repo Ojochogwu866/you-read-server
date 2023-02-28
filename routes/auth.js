@@ -87,6 +87,7 @@ router.post("/update-user/books-year/:_id", async (req, res) => {
     if (!user) return res.status(404).send("User not found");
     user.data.bookReading.pagesLeft = req.body.pagesLeft;
     user.data.bookReading.booksCompleted = req.body.booksCompleted;
+    user.data.bookReading.yearTarget = req.body.yearTarget;
     const updatedUser = await user.save();
     res.send(updatedUser);
   } catch (error) {
