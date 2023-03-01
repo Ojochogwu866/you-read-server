@@ -28,7 +28,7 @@ const userSchema = new Schema(
       required: false,
       default: {
         bookReading: {
-          bookId: {
+          _id: {
             type: String,
             unique: true,
             required: true,
@@ -46,7 +46,7 @@ const userSchema = new Schema(
               type: Number,
               default: 0,
             },
-            title: {
+            bookTitle: {
               type: String,
               default: "",
             },
@@ -54,14 +54,28 @@ const userSchema = new Schema(
               type: Number,
               default: 0,
             },
-            author: {
+            bookAuthor: {
               type: String,
               default: "",
             },
-            genre: {
+            bookGenre: {
               type: String,
               default: "",
             },
+          },
+        },
+        bookGoals: {
+          yearTotalRead: {
+            type: Number,
+            default: 0,
+          },
+          completed: {
+            type: String,
+            default: "",
+          },
+          pagesPerWeek: {
+            type: String,
+            default: "",
           },
         },
       },
