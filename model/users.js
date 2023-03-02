@@ -14,6 +14,10 @@ const userSchema = new Schema(
       maxlength: 255,
       minlength: 6,
     },
+    phoneNumber: {
+      type: String,
+      maxlength: 20,
+    },
     password: {
       type: String,
       maxlength: 1024,
@@ -26,57 +30,73 @@ const userSchema = new Schema(
     data: {
       type: mongoose.Schema.Types.Mixed,
       required: false,
-      default: {
-        bookReading: {
-          _id: {
-            type: String,
-            unique: true,
-            required: true,
-          },
-          currentBook: {
-            pagesLeft: {
-              type: Number,
-              default: 0,
-            },
-            bookCompleted: {
-              type: boolean,
-              default: false,
-            },
-            daysLeft: {
-              type: Number,
-              default: 0,
-            },
-            bookTitle: {
-              type: String,
-              default: "",
-            },
-            totalPages: {
-              type: Number,
-              default: 0,
-            },
-            bookAuthor: {
-              type: String,
-              default: "",
-            },
-            bookGenre: {
-              type: String,
-              default: "",
-            },
-          },
+      bookReading: {
+        _id: {
+          type: String,
+          unique: true,
+          required: true,
         },
-        bookGoals: {
-          yearTotalRead: {
+        currentBook: {
+          pagesLeft: {
             type: Number,
             default: 0,
           },
-          completed: {
+          bookCompleted: {
+            type: boolean,
+            default: false,
+          },
+          daysLeft: {
+            type: Number,
+            default: 0,
+          },
+          bookTitle: {
             type: String,
             default: "",
           },
-          pagesPerWeek: {
+          totalPages: {
+            type: Number,
+            default: 0,
+          },
+          bookAuthor: {
             type: String,
             default: "",
           },
+          bookGenre: {
+            type: String,
+            default: "",
+          },
+        },
+      },
+      bookGoals: {
+        yearTotalRead: {
+          type: Number,
+          default: 0,
+        },
+        completed: {
+          type: String,
+          default: "",
+        },
+        pagesPerWeek: {
+          type: String,
+          default: "",
+        },
+      },
+      bookStats: {
+        totalRead: {
+          type: Number,
+          default: 0,
+        },
+        monthlyRead: {
+          type: Number,
+          default: 0,
+        },
+        readPerDay: {
+          type: Number,
+          default: 0,
+        },
+        pagesPerWeek: {
+          type: Number,
+          default: 0,
         },
       },
     },

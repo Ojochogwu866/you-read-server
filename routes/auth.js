@@ -81,19 +81,42 @@ router.get("/success", isLoggedIn, (req, res) => {
   res.send(`Welcome ${req.user.email}`);
 });
 
-router.post("/update-user/books-year/:_id", async (req, res) => {
+router.post("/books/:_id", async (req, res) => {
   try {
     const user = await User.findById(req.params._id);
     if (!user) return res.status(404).send("User not found");
-    user.data.bookReading.currentBook.pagesLeft = req.body.pagesLeft;
-    user.data.bookReading.currentBook.booksCompleted = req.body.booksCompleted;
-    user.data.bookReading.currentBook.totalPages = req.body.totalPages;
+    _id: new mongoose.Types.ObjectId(),
+      (user.data.bookReading.currentBook.totalPages = req.body.pagesLeft);
+    user.data.bookReading.currentBook.bookGenre = req.body.daysLeft;
+    user.data.bookReading.currentBook.bookTitle = req.body.bookTitle;
     const updatedUser = await user.save();
     res.send(updatedUser);
   } catch (error) {
     res.status(400).send(error.message);
   }
 });
+// router.post("/books/_:id", async (req, res) => {
+//   try {
+//     const user = await User.findById(req.params._id);
+//     if (!user) return res.status(404).send("User not found");
+//     const { bookTitle, bookAuthor, bookGenre, totalPages } = req.body;
+//     const newBook = {
+//       _id: new mongoose.Types.ObjectId(),
+//       bookTitle,
+//       bookAuthor,
+//       bookGenre,
+//       totalPages,
+//       pagesLeft: totalPages,
+//       bookCompleted: false,
+//       daysLeft: 0,
+//     };
+//     user.data.bookReading.currentBook.push(newBook);
+//     const updatedUser = await user.save();
+//     res.send(updatedUser);
+//   } catch (error) {
+//     res.status(400).send(error.message);
+//   }
+// });
 // const isLoggedIn = (req, res, next) => {
 //   req.user ? next() : res.sendStatus(401);
 // };
