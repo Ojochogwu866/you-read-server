@@ -24,6 +24,7 @@ router.post("/register", async (req, res) => {
     name: req.body.name,
     email: req.body.email,
     password: hashedPassword,
+    phoneNumber: req.body.phoneNumber,
   });
   try {
     const savedUser = await user.save();
@@ -81,42 +82,50 @@ router.get("/success", isLoggedIn, (req, res) => {
   res.send(`Welcome ${req.user.email}`);
 });
 
-router.post("/books/:_id", async (req, res) => {
-  try {
-    const user = await User.findById(req.params._id);
-    if (!user) return res.status(404).send("User not found");
-    _id: new mongoose.Types.ObjectId(),
-      (user.data.bookReading.currentBook.totalPages = req.body.pagesLeft);
-    user.data.bookReading.currentBook.bookGenre = req.body.daysLeft;
-    user.data.bookReading.currentBook.bookTitle = req.body.bookTitle;
-    const updatedUser = await user.save();
-    res.send(updatedUser);
-  } catch (error) {
-    res.status(400).send(error.message);
-  }
-});
-// router.post("/books/_:id", async (req, res) => {
+// router.post("/books/:_id", async (req, res) => {
 //   try {
 //     const user = await User.findById(req.params._id);
 //     if (!user) return res.status(404).send("User not found");
-//     const { bookTitle, bookAuthor, bookGenre, totalPages } = req.body;
-//     const newBook = {
-//       _id: new mongoose.Types.ObjectId(),
-//       bookTitle,
-//       bookAuthor,
-//       bookGenre,
-//       totalPages,
-//       pagesLeft: totalPages,
-//       bookCompleted: false,
-//       daysLeft: 0,
-//     };
-//     user.data.bookReading.currentBook.push(newBook);
+//     user.data.bookReading.currentReading.bookPages = req.body.bookPages;
+//     user.data.bookReading.currentReading.bookGenre = req.body.bookGenre;
 //     const updatedUser = await user.save();
 //     res.send(updatedUser);
 //   } catch (error) {
 //     res.status(400).send(error.message);
 //   }
 // });
+
+router.post("/books/:_id", async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(401).json({ msg: "User not authorized" });
+    }
+    const {
+      bookTitle,
+      bookAuthor,
+      bookPages,
+      pagesLeft,
+      daysLeft,
+      bookCompleted,
+      bookGenre,
+    } = req.body;
+    const newBook = {
+      bookTitle,
+      bookAuthor,
+      bookPages,
+      pagesLeft,
+      bookGenre,
+      daysLeft,
+      bookCompleted,
+    };
+    user.data.bookReading.currentReading.push(newBook);
+    const updatedUser = await user.save();
+    res.send(updatedUser);
+  } catch (error) {
+    res.status(400).send(error.message);
+  }
+});
 // const isLoggedIn = (req, res, next) => {
 //   req.user ? next() : res.sendStatus(401);
 // };
