@@ -82,25 +82,41 @@ router.get("/success", isLoggedIn, (req, res) => {
   res.send(`Welcome ${req.user.email}`);
 });
 
-router.post("/books/:_id", async (req, res) => {
-  const { bookTitle, bookAuthor, totalPages, pagesLeft } = req.body;
+router.post("/:_id/books", async (req, res) => {
+  const {
+    bookTitle,
+    bookAuthor,
+    totalPages,
+    pagesLeft,
+    daysLeft,
+    bookGenre,
+    bookCompleted,
+  } = req.body;
   const user = await User.findById(req.params._id);
   if (!user) return res.status(404).send("User not found");
-  if (!user.data) {
-    user.data = {};
+  if (!user.bookReading) {
+    user.bookReading = {};
   }
-  if (!user.data.bookReading) {
-    user.data.bookReading = {};
+  if (!user.bookReading.currentReading) {
+    user.bookReading.currentReading = {};
   }
-  if (!user.data.bookReading.currentReading) {
-    user.data.bookReading.currentReading = {};
-  }
-  user.data.bookReading.currentReading = {
-    ...user.data.bookReading.currentReading,
+  // user.bookReading.currentReading.bookPages = req.body.bookPages;
+  // user.bookReading.currentReading.bookGenre = req.body.bookGenre;
+  // user.bookReading.currentReading.bookTitle = req.body.bookTitle;
+  // user.bookReading.currentReading.bookAuthor = req.body.bookAuthor;
+  // user.bookReading.currentReading.daysLeft = req.body.daysLeft;
+  // user.bookReading.currentReading.pagesLeft = req.body.pagesLeft;
+  // user.bookReading.currentReading.bookCompleted = req.body.bookCompleted;
+
+  user.bookReading.currentReading = {
+    ...user.bookReading.currentReading,
     bookTitle: bookTitle,
     bookAuthor: bookAuthor,
     totalPages: totalPages,
     pagesLeft: pagesLeft,
+    daysLeft: daysLeft,
+    bookGenre: bookGenre,
+    bookCompleted: bookCompleted,
   };
   const updatedUser = await user.save();
   res.send(updatedUser);
