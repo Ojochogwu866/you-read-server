@@ -82,54 +82,27 @@ router.get("/success", isLoggedIn, (req, res) => {
   res.send(`Welcome ${req.user.email}`);
 });
 
-// router.post("/books/:_id", async (req, res) => {
-//   try {
-//     const user = await User.findById(req.params._id);
-//     if (!user) return res.status(404).send("User not found");
-//     user.data.bookReading.currentReading.bookPages = req.body.bookPages;
-//     user.data.bookReading.currentReading.bookGenre = req.body.bookGenre;
-//     const updatedUser = await user.save();
-//     res.send(updatedUser);
-//   } catch (error) {
-//     res.status(400).send(error.message);
-//   }
-// });
-
 router.post("/books/:_id", async (req, res) => {
-  try {
-    const user = await User.findById(req.params.id);
-    if (!user) {
-      return res.status(401).json({ msg: "User not authorized" });
-    }
-    const {
-      bookTitle,
-      bookAuthor,
-      bookPages,
-      pagesLeft,
-      daysLeft,
-      bookCompleted,
-      bookGenre,
-    } = req.body;
-    const newBook = {
-      bookTitle,
-      bookAuthor,
-      bookPages,
-      pagesLeft,
-      bookGenre,
-      daysLeft,
-      bookCompleted,
-    };
-    user.data.bookReading.currentReading.push(newBook);
-    const updatedUser = await user.save();
-    res.send(updatedUser);
-  } catch (error) {
-    res.status(400).send(error.message);
+  const { bookTitle, bookAuthor, totalPages, pagesLeft } = req.body;
+  const user = await User.findById(req.params._id);
+  if (!user) return res.status(404).send("User not found");
+  if (!user.data) {
+    user.data = {};
   }
+  if (!user.data.bookReading) {
+    user.data.bookReading = {};
+  }
+  if (!user.data.bookReading.currentReading) {
+    user.data.bookReading.currentReading = {};
+  }
+  user.data.bookReading.currentReading = {
+    ...user.data.bookReading.currentReading,
+    bookTitle: bookTitle,
+    bookAuthor: bookAuthor,
+    totalPages: totalPages,
+    pagesLeft: pagesLeft,
+  };
+  const updatedUser = await user.save();
+  res.send(updatedUser);
 });
-// const isLoggedIn = (req, res, next) => {
-//   req.user ? next() : res.sendStatus(401);
-// };
-// router.get("/profile", isLoggedIn, (req, res) => {
-//   res.render("profile.ejs", { user: req.user });
-// });
 module.exports = router;

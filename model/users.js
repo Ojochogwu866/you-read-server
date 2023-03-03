@@ -1,4 +1,3 @@
-const { boolean } = require("joi");
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
@@ -92,7 +91,6 @@ const userSchema = new Schema(
     },
     phoneNumber: {
       type: String,
-      required: true,
     },
     password: {
       type: String,
@@ -100,6 +98,7 @@ const userSchema = new Schema(
       minlength: 6,
       maxlength: 1024,
     },
+
     bookReading: {
       currentReading: {
         type: bookReadingSchema,
@@ -115,9 +114,11 @@ const userSchema = new Schema(
       },
     },
   },
+
   { timestamps: true }
 );
 module.exports = mongoose.model("User", userSchema);
+// const userSchema = new Schema(
 //   {
 //     name: {
 //       type: String,
@@ -146,18 +147,13 @@ module.exports = mongoose.model("User", userSchema);
 //       type: mongoose.Schema.Types.Mixed,
 //       required: false,
 //       bookReading: {
-//         _id: {
-//           type: String,
-//           unique: true,
-//           required: true,
-//         },
 //         currentBook: {
 //           pagesLeft: {
 //             type: Number,
 //             default: 0,
 //           },
 //           bookCompleted: {
-//             type: boolean,
+//             type: Boolean,
 //             default: false,
 //           },
 //           daysLeft: {
