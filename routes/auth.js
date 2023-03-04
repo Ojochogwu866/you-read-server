@@ -82,7 +82,7 @@ router.get("/success", isLoggedIn, (req, res) => {
   res.send(`Welcome ${req.user.email}`);
 });
 
-router.post("/:_id/books", async (req, res) => {
+router.post("/:_id/books/current-reading", async (req, res) => {
   const {
     bookTitle,
     bookAuthor,
@@ -100,14 +100,6 @@ router.post("/:_id/books", async (req, res) => {
   if (!user.bookReading.currentReading) {
     user.bookReading.currentReading = {};
   }
-  // user.bookReading.currentReading.bookPages = req.body.bookPages;
-  // user.bookReading.currentReading.bookGenre = req.body.bookGenre;
-  // user.bookReading.currentReading.bookTitle = req.body.bookTitle;
-  // user.bookReading.currentReading.bookAuthor = req.body.bookAuthor;
-  // user.bookReading.currentReading.daysLeft = req.body.daysLeft;
-  // user.bookReading.currentReading.pagesLeft = req.body.pagesLeft;
-  // user.bookReading.currentReading.bookCompleted = req.body.bookCompleted;
-
   user.bookReading.currentReading = {
     ...user.bookReading.currentReading,
     bookTitle: bookTitle,
@@ -118,7 +110,48 @@ router.post("/:_id/books", async (req, res) => {
     bookGenre: bookGenre,
     bookCompleted: bookCompleted,
   };
-  const updatedUser = await user.save();
-  res.send(updatedUser);
+  const savedUser = await user.save();
+  res.status(200).json(savedUser);
+});
+
+router.post("/:_id/books/book-stats", async (req, res) => {
+  const { totalRead, monthlyRead, readPerDay, pagesPerWeek } = req.body;
+  const user = await User.findById(req.params._id);
+  if (!user) return res.status(404).send("User not found");
+  if (!user.bookReading) {
+    user.bookReading = {};
+  }
+  if (!user.bookReading.bookStats) {
+    user.bookReading.bookStats = {};
+  }
+  user.bookReading.bookStats = {
+    ...user.bookReading.bookStats,
+    totalRead: totalRead,
+    monthlyRead: monthlyRead,
+    readPerDay: readPerDay,
+    pagesPerWeek: pagesPerWeek,
+  };
+  const savedUser = await user.save();
+  res.status(200).json(savedUser);
+});
+
+router.post("/:_id/books/book-goals", async (req, res) => {
+  const { yearTotalRead, completed, pagesPerWeek } = req.body;
+  const user = await User.findById(req.params._id);
+  if (!user) return res.status(404).send("User not found");
+  if (!user.bookReading) {
+    user.bookReading = {};
+  }
+  if (!user.bookReading.books) {
+    user.bookReading.bookGoals = {};
+  }
+  user.bookReading.bookGoals = {
+    ...user.bookReading.bookGoals,
+    yearTotalRead: yearTotalRead,
+    completed: completed,
+    pagesPerWeek: pagesPerWeek,
+  };
+  const savedUser = await user.save();
+  res.status(200).json(savedUser);
 });
 module.exports = router;
