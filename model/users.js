@@ -38,12 +38,12 @@ const bookGoalsSchema = new Schema({
     default: 0,
   },
   completed: {
-    type: String,
-    default: "",
+    type: Number,
+    default: 0,
   },
   pagesPerWeek: {
-    type: String,
-    default: "",
+    type: Number,
+    default: 0,
   },
 });
 
@@ -75,13 +75,11 @@ const bookReadingDefault = {
   bookAuthor: "",
   bookGenre: "",
 };
-
 const bookGoalsDefault = {
   yearTotalRead: 0,
-  completed: "",
-  pagesPerWeek: "",
+  completed: 0,
+  pagesPerWeek: 0,
 };
-
 const bookStatsDefault = {
   totalRead: 0,
   monthlyRead: 0,
@@ -93,15 +91,12 @@ const userSchema = new Schema(
   {
     name: {
       type: String,
-
       minlength: 6,
       maxlength: 255,
     },
     email: {
       type: String,
-
       maxlength: 255,
-      minlength: 6,
       unique: true,
     },
     phoneNumber: {
@@ -109,7 +104,6 @@ const userSchema = new Schema(
     },
     password: {
       type: String,
-
       minlength: 6,
       maxlength: 1024,
     },

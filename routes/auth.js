@@ -94,12 +94,6 @@ router.post("/:_id/books/current-reading", async (req, res) => {
   } = req.body;
   const user = await User.findById(req.params._id);
   if (!user) return res.status(404).send("User not found");
-  if (!user.bookReading) {
-    user.bookReading = {};
-  }
-  if (!user.bookReading.currentReading) {
-    user.bookReading.currentReading = {};
-  }
   user.bookReading.currentReading = {
     ...user.bookReading.currentReading,
     bookTitle: bookTitle,
@@ -118,12 +112,6 @@ router.post("/:_id/books/book-stats", async (req, res) => {
   const { totalRead, monthlyRead, readPerDay, pagesPerWeek } = req.body;
   const user = await User.findById(req.params._id);
   if (!user) return res.status(404).send("User not found");
-  if (!user.bookReading) {
-    user.bookReading = {};
-  }
-  if (!user.bookReading.bookStats) {
-    user.bookReading.bookStats = {};
-  }
   user.bookReading.bookStats = {
     ...user.bookReading.bookStats,
     totalRead: totalRead,
@@ -139,12 +127,6 @@ router.post("/:_id/books/book-goals", async (req, res) => {
   const { yearTotalRead, completed, pagesPerWeek } = req.body;
   const user = await User.findById(req.params._id);
   if (!user) return res.status(404).send("User not found");
-  if (!user.bookReading) {
-    user.bookReading = {};
-  }
-  if (!user.bookReading.books) {
-    user.bookReading.bookGoals = {};
-  }
   user.bookReading.bookGoals = {
     ...user.bookReading.bookGoals,
     yearTotalRead: yearTotalRead,
