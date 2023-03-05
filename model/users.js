@@ -66,27 +66,6 @@ const bookStatsSchema = new Schema({
   },
 });
 
-const bookReadingDefault = {
-  pagesLeft: 0,
-  bookCompleted: false,
-  daysLeft: 0,
-  bookTitle: "",
-  totalPages: 0,
-  bookAuthor: "",
-  bookGenre: "",
-};
-const bookGoalsDefault = {
-  yearTotalRead: 0,
-  completed: 0,
-  pagesPerWeek: 0,
-};
-const bookStatsDefault = {
-  totalRead: 0,
-  monthlyRead: 0,
-  readPerDay: 0,
-  pagesPerWeek: 0,
-};
-
 const userSchema = new Schema(
   {
     name: {
@@ -108,17 +87,18 @@ const userSchema = new Schema(
       maxlength: 1024,
     },
     bookReading: {
+      required: false,
       currentReading: {
-        type: bookReadingSchema,
-        default: bookReadingDefault,
+        type: [bookReadingSchema],
+        default: [],
       },
       bookGoals: {
         type: bookGoalsSchema,
-        default: bookGoalsDefault,
+        default: {},
       },
       bookStats: {
         type: bookStatsSchema,
-        default: bookStatsDefault,
+        default: {},
       },
     },
   },

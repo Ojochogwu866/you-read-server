@@ -83,29 +83,50 @@ router.get("/success", isLoggedIn, (req, res) => {
 });
 
 router.post("/:_id/books/current-reading", async (req, res) => {
-  const {
-    bookTitle,
-    bookAuthor,
-    totalPages,
-    pagesLeft,
-    daysLeft,
-    bookGenre,
-    bookCompleted,
-  } = req.body;
-  const user = await User.findById(req.params._id);
-  if (!user) return res.status(404).send("User not found");
-  user.bookReading.currentReading = {
-    ...user.bookReading.currentReading,
-    bookTitle: bookTitle,
-    bookAuthor: bookAuthor,
-    totalPages: totalPages,
-    pagesLeft: pagesLeft,
-    daysLeft: daysLeft,
-    bookGenre: bookGenre,
-    bookCompleted: bookCompleted,
-  };
-  const savedUser = await user.save();
-  res.status(200).json(savedUser);
+  const { bookTitle, bookAuthor, totalPages, bookGenre } = req.body;
+  try {
+    const user = await User.findById(req.params._id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    user.bookReading.currentReading.push({
+      bookTitle,
+      bookAuthor,
+      totalPages,
+      bookGenre,
+      pagesLeft: totalPages,
+      bookCompleted: false,
+      daysLeft: null,
+    });
+
+    const updatedUser = await user.save();
+    return res.status(201).json(updatedUser);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+});
+router.put("/:userId/books/:bookId/currentReading", async (req, res) => {
+  const userId = req.params._id;
+  const bookId = req.params.bookReading.currentReading._id;
+  const currentReadingUpdates = req.body;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).send({ error: "User not found" });
+    }
+    const book = user.bookReading.currentReading.id(bookId);
+    if (!book) {
+      return res.status(404).send({ error: "Book not found" });
+    }
+    book.set(currentReadingUpdates);
+    await user.save();
+    res.send(book);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: "Internal server error" });
+  }
 });
 
 router.post("/:_id/books/book-stats", async (req, res) => {
