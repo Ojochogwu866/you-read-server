@@ -45,7 +45,7 @@ router.post("/login", async (req, res) => {
   );
   if (!validPassword) return res.status(400).send("Invalid Password");
   //create and assign a token
-  const token = jwt.sign({ _id: User._id }, process.env.TOKEN_SECRET);
+  const token = jwt.sign({ _id: userExist._id }, process.env.TOKEN_SECRET);
   res.header("auth-token", token).send(token);
   res.send("Signed In Successfully");
 });
@@ -108,7 +108,7 @@ router.post("/:_id/books/current-reading", async (req, res) => {
 });
 router.put("/:userId/books/:bookId/currentReading", async (req, res) => {
   const userId = req.params._id;
-  const bookId = req.params.bookReading.currentReading._id;
+  const bookId = req.params.id;
   const currentReadingUpdates = req.body;
 
   try {
@@ -116,7 +116,7 @@ router.put("/:userId/books/:bookId/currentReading", async (req, res) => {
     if (!user) {
       return res.status(404).send({ error: "User not found" });
     }
-    const book = user.bookReading.currentReading.id(bookId);
+    const book = user.bookReading.currentReading._id(bookId);
     if (!book) {
       return res.status(404).send({ error: "Book not found" });
     }

@@ -1,5 +1,4 @@
 const Joi = require("joi");
-
 //register validation
 const registerValidation = (data) => {
   const schema = Joi.object({
