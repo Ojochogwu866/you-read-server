@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+const { Schema } = mongoose;
 
 const bookReadingSchema = new Schema({
   pagesLeft: {
@@ -79,8 +79,9 @@ const userSchema = new Schema(
       unique: true,
     },
     phoneNumber: {
-      type: String,
+      type: Number,
     },
+
     password: {
       type: String,
       minlength: 6,
@@ -104,5 +105,4 @@ const userSchema = new Schema(
   },
   { timestamps: true }
 );
-
 module.exports = mongoose.model("User", userSchema);

@@ -24,7 +24,6 @@ router.post("/register", async (req, res) => {
     name: req.body.name,
     email: req.body.email,
     password: hashedPassword,
-    phoneNumber: req.body.phoneNumber,
   });
   try {
     const savedUser = await user.save();
@@ -35,19 +34,23 @@ router.post("/register", async (req, res) => {
 });
 //login
 router.post("/login", async (req, res) => {
-  const { error } = loginValidation(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
-  const userExist = await User.findOne({ email: req.body.email });
-  if (!userExist) return res.status(400).send("Email or Password Invalid");
-  const validPassword = await bcrypt.compare(
-    req.body.password,
-    userExist.password
-  );
-  if (!validPassword) return res.status(400).send("Invalid Password");
-  //create and assign a token
-  const token = jwt.sign({ _id: userExist._id }, process.env.TOKEN_SECRET);
-  res.header("auth-token", token).send(token);
-  res.send("Signed In Successfully");
+  try {
+    const { error } = loginValidation(req.body);
+    if (error) return res.status(400).send(error.details[0].message);
+    const userExist = await User.findOne({ email: req.body.email });
+    if (!userExist) return res.status(400).send("Email or Password Invalid");
+    const validPassword = await bcrypt.compare(
+      req.body.password,
+      userExist.password
+    );
+    if (!validPassword) return res.status(400).send("Invalid Password");
+    //create and assign a token
+    const token = jwt.sign({ _id: userExist._id }, process.env.TOKEN_SECRET);
+    res.header("auth-token", token).send(token);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error during login");
+  }
 });
 router.get(
   "/auth/google",
@@ -83,22 +86,29 @@ router.get("/success", isLoggedIn, (req, res) => {
 });
 
 router.post("/:_id/books/current-reading", async (req, res) => {
-  const { bookTitle, bookAuthor, totalPages, bookGenre } = req.body;
+  const {
+    bookTitle,
+    bookAuthor,
+    totalPages,
+    bookGenre,
+    pagesLeft,
+    bookCompleted,
+    daysLeft,
+  } = req.body;
   try {
     const user = await User.findById(req.params._id);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    user.bookReading.currentReading.push({
+    user.bookReading.currentReading.children.push({
       bookTitle,
       bookAuthor,
       totalPages,
       bookGenre,
-      pagesLeft: totalPages,
-      bookCompleted: false,
-      daysLeft: null,
+      pagesLeft,
+      bookCompleted,
+      daysLeft,
     });
-
     const updatedUser = await user.save();
     return res.status(201).json(updatedUser);
   } catch (error) {
@@ -106,42 +116,25 @@ router.post("/:_id/books/current-reading", async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 });
-router.put("/:userId/books/:bookId/currentReading", async (req, res) => {
-  const userId = req.params._id;
-  const bookId = req.params.id;
-  const currentReadingUpdates = req.body;
-
-  try {
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).send({ error: "User not found" });
-    }
-    const book = user.bookReading.currentReading._id(bookId);
-    if (!book) {
-      return res.status(404).send({ error: "Book not found" });
-    }
-    book.set(currentReadingUpdates);
-    await user.save();
-    res.send(book);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send({ error: "Internal server error" });
-  }
-});
 
 router.post("/:_id/books/book-stats", async (req, res) => {
-  const { totalRead, monthlyRead, readPerDay, pagesPerWeek } = req.body;
-  const user = await User.findById(req.params._id);
-  if (!user) return res.status(404).send("User not found");
-  user.bookReading.bookStats = {
-    ...user.bookReading.bookStats,
-    totalRead: totalRead,
-    monthlyRead: monthlyRead,
-    readPerDay: readPerDay,
-    pagesPerWeek: pagesPerWeek,
-  };
-  const savedUser = await user.save();
-  res.status(200).json(savedUser);
+  try {
+    const { totalRead, monthlyRead, readPerDay, pagesPerWeek } = req.body;
+    const user = await User.findById(req.params._id);
+    if (!user) return res.status(404).send("User not found");
+    user.bookReading.bookStats = {
+      ...user.bookReading.bookStats,
+      totalRead: totalRead,
+      monthlyRead: monthlyRead,
+      readPerDay: readPerDay,
+      pagesPerWeek: pagesPerWeek,
+    };
+    const savedUser = await user.save();
+    res.status(200).json(savedUser);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error");
+  }
 });
 
 router.post("/:_id/books/book-goals", async (req, res) => {
