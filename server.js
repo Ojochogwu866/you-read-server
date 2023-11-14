@@ -1,11 +1,9 @@
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
-const mongo = require("mongodb");
 const dotenv = require("dotenv");
 const authRoute = require("./routes/auth");
 const bodyParser = require("body-parser");
-const cookieParser = require("cookie-parser");
 const passport = require("passport");
 const flash = require("express-flash");
 const session = require("express-session");
@@ -13,7 +11,6 @@ const cors = require("cors");
 require("./config/passport");
 require("./config/google-config");
 require("./config/facebook-config");
-
 dotenv.config();
 
 mongoose.set("strictQuery", false);
